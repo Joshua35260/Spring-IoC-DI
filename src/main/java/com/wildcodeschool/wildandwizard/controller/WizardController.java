@@ -1,23 +1,24 @@
 package com.wildcodeschool.wildandwizard.controller;
 
 import com.wildcodeschool.wildandwizard.entity.Wizard;
-import com.wildcodeschool.wildandwizard.repository.WizardRepository;
+import com.wildcodeschool.wildandwizard.repository.WizardDao;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
 
 @Controller
 public class WizardController {
 
-    private WizardRepository repository = new WizardRepository();
+   @Autowired 
+   private WizardDao wizardDao;
 
     @GetMapping("/wizards")
     public String getAll(Model model) {
 
-        model.addAttribute("wizards", repository.findAll());
+        model.addAttribute("wizards", wizardDao.findAll());
 
         return "wizards";
     }
@@ -28,7 +29,7 @@ public class WizardController {
 
         Wizard wizard = new Wizard();
         if (id != null) {
-            wizard = repository.findById(id);
+            wizard = wizardDao.findById(id);
         }
         model.addAttribute("wizard", wizard);
 
@@ -39,9 +40,9 @@ public class WizardController {
     public String postWizard(@ModelAttribute Wizard wizard) {
 
         if (wizard.getId() != null) {
-            repository.update(wizard);
+            wizardDao.update(wizard);
         } else {
-            repository.save(wizard);
+            wizardDao.save(wizard);
         }
         return "redirect:/wizards";
     }
@@ -49,7 +50,7 @@ public class WizardController {
     @GetMapping("/wizard/delete")
     public String deleteWizard(@RequestParam Long id) {
 
-        repository.deleteById(id);
+        wizardDao.deleteById(id);
 
         return "redirect:/wizards";
     }
